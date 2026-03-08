@@ -6,9 +6,6 @@ on:
       - copilot/collaborator-invitation-email
   workflow_dispatch:
 
-permissions:
-  administration: write
-
 jobs:
   invite:
     runs-on: ubuntu-latest
