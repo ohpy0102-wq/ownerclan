@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - copilot/collaborator-invitation-email
+  workflow_dispatch:
 
 permissions:
   administration: write
@@ -17,17 +18,19 @@ jobs:
         with:
           script: |
             try {
-              await github.rest.repos.addCollaborator({
+              const result = await github.rest.repos.addCollaborator({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 username: 'qudansdl',
                 permission: 'push'
               });
-              console.log('Successfully sent collaborator invitation to qudansdl');
+              console.log('Successfully sent collaborator invitation to qudansdl, status:', result.status);
             } catch (error) {
               if (error.status === 422) {
                 console.log('qudansdl is already a collaborator');
               } else {
+                console.log('Error status:', error.status);
+                console.log('Error message:', error.message);
                 throw error;
               }
             }
