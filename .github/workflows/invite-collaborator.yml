@@ -1,10 +1,10 @@
 name: Invite Collaborator
 
 on:
-  push:
-    branches:
-      - copilot/collaborator-invitation-email
   workflow_dispatch:
+
+permissions:
+  administration: write
 
 jobs:
   invite:
@@ -14,20 +14,16 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            try {
-              const result = await github.rest.repos.addCollaborator({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                username: 'qudansdl',
-                permission: 'push'
-              });
-              console.log('Successfully sent collaborator invitation to qudansdl, status:', result.status);
-            } catch (error) {
-              if (error.status === 422) {
-                console.log('qudansdl is already a collaborator');
-              } else {
-                console.log('Error status:', error.status);
-                console.log('Error message:', error.message);
-                throw error;
-              }
+            const { status } = await github.rest.repos.addCollaborator({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: 'qudansdl',
+              permission: 'push'
+            });
+            if (status === 201) {
+              console.log('Collaborator invitation sent to qudansdl');
+            } else if (status === 204) {
+              console.log('qudansdl is already a collaborator');
+            } else {
+              console.log('Unexpected status:', status);
             }
