@@ -1,0 +1,29 @@
+name: Invite Collaborator
+
+on:
+  workflow_dispatch:
+
+permissions:
+  administration: write
+
+jobs:
+  invite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invite qudansdl as collaborator
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { status } = await github.rest.repos.addCollaborator({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: 'qudansdl',
+              permission: 'push'
+            });
+            if (status === 201) {
+              console.log('Collaborator invitation sent to qudansdl');
+            } else if (status === 204) {
+              console.log('qudansdl is already a collaborator');
+            } else {
+              console.log('Unexpected status:', status);
+            }
